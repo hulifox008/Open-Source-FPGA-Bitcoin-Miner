@@ -22,7 +22,11 @@
 
 `timescale 1ns/1ps
 
-module fpgaminer_top (osc_clk);
+module fpgaminer_top (osc_clk,
+tx_serial,
+rx_serial,
+led /* indicating serial communication */
+);
 
 	// The LOOP_LOG2 parameter determines how unrolled the SHA-256
 	// calculations are. For example, a setting of 0 will completely
@@ -49,6 +53,7 @@ module fpgaminer_top (osc_clk);
 	localparam [31:0] GOLDEN_NONCE_OFFSET = (32'd1 << (7 - LOOP_LOG2)) + 32'd1;
 
 	input osc_clk;
+    output reg [31:0] golden_nonce;
 
 
 	//// 
@@ -57,20 +62,15 @@ module fpgaminer_top (osc_clk);
 	reg [31:0] nonce = 32'h00000000;
 
 
-	//// PLL
 	wire hash_clk;
-	`ifndef SIM
-		main_pll pll_blk (osc_clk, hash_clk);
-	`else
-		assign hash_clk = osc_clk;
-	`endif
+    assign hash_clk=osc_clk;
 
 
 	//// Hashers
 	wire [255:0] hash, hash2;
 	reg [5:0] cnt = 6'd0;
 	reg feedback = 1'b0;
-
+/*
 	sha256_transform #(.LOOP(LOOP)) uut (
 		.clk(hash_clk),
 		.feedback(feedback),
@@ -79,6 +79,7 @@ module fpgaminer_top (osc_clk);
 		.rx_input(data),
 		.tx_hash(hash)
 	);
+*/
 	sha256_transform #(.LOOP(LOOP)) uut2 (
 		.clk(hash_clk),
 		.feedback(feedback),
@@ -88,11 +89,10 @@ module fpgaminer_top (osc_clk);
 		.tx_hash(hash2)
 	);
 
-
 	//// Virtual Wire Control
 	reg [255:0] midstate_buf = 0, data_buf = 0;
 	wire [255:0] midstate_vw, data2_vw;
-
+/*
 	`ifndef SIM
 		virtual_wire # (.PROBE_WIDTH(0), .WIDTH(256), .INSTANCE_ID("STAT")) midstate_vw_blk(.probe(), .source(midstate_vw));
 		virtual_wire # (.PROBE_WIDTH(0), .WIDTH(256), .INSTANCE_ID("DAT2")) data2_vw_blk(.probe(), .source(data2_vw));
@@ -106,7 +106,7 @@ module fpgaminer_top (osc_clk);
 		virtual_wire # (.PROBE_WIDTH(32), .WIDTH(0), .INSTANCE_ID("GNON")) golden_nonce_vw_blk (.probe(golden_nonce), .source());
 		virtual_wire # (.PROBE_WIDTH(32), .WIDTH(0), .INSTANCE_ID("NONC")) nonce_vw_blk (.probe(nonce), .source());
 	`endif
-
+*/
 
 	//// Control Unit
 	reg is_golden_ticket = 1'b0;

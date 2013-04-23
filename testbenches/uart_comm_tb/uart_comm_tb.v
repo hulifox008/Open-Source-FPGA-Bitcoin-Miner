@@ -1,17 +1,21 @@
-`timescale 1ns/1ps
+`timescale 1ns/1ns
 
 // Works with Icarus Verilog
 module uart_comm_tb;
+
+    localparam osc_clk_freq = 125000000;
+    localparam baud_rate = 9600;
+    localparam serial_bit_width = 1000000000/baud_rate;
 
 	// Clocks
 	reg comm_clk = 0;
 	reg hash_clk = 0;
 
 	initial while(1) begin
-		#5 comm_clk = ~comm_clk;
+		#(1000000000/(baud_rate*16)/2) comm_clk = ~comm_clk;
 	end
 
-	initial while(1) #1 hash_clk = ~hash_clk;
+	initial while(1) #(1000000000/osc_clk_freq/2) hash_clk = ~hash_clk;
 
 	//
 	reg test_passed = 0;
@@ -126,7 +130,7 @@ module uart_comm_tb;
 		uart_send_word (32'h98c3a458);
 		uart_gap; uart_gap; uart_gap; uart_gap; uart_gap; uart_gap; uart_gap; uart_gap;
 
-		#3000;
+		#(serial_bit_width*100);
 		if (test_passed)
 			$display ("\n*** TEST PASSED ***\n");
 		else
@@ -245,16 +249,16 @@ module uart_comm_tb;
 	task uart_send_byte;
 	input [7:0] byte;
 	begin
-		uut_rx = 0; #160;
-		uut_rx = byte[0]; #160;
-		uut_rx = byte[1]; #160;
-		uut_rx = byte[2]; #160;
-		uut_rx = byte[3]; #160;
-		uut_rx = byte[4]; #160;
-		uut_rx = byte[5]; #160;
-		uut_rx = byte[6]; #160;
-		uut_rx = byte[7]; #160;
-		uut_rx = 1; #160;
+		uut_rx = 0; #serial_bit_width;
+		uut_rx = byte[0]; #serial_bit_width;
+		uut_rx = byte[1]; #serial_bit_width;
+		uut_rx = byte[2]; #serial_bit_width;
+		uut_rx = byte[3]; #serial_bit_width;
+		uut_rx = byte[4]; #serial_bit_width;
+		uut_rx = byte[5]; #serial_bit_width;
+		uut_rx = byte[6]; #serial_bit_width;
+		uut_rx = byte[7]; #serial_bit_width;
+		uut_rx = 1; #serial_bit_width;
 		// Add some timing variance
 		while (($random & 3) != 0) #10;
 	end
@@ -274,21 +278,21 @@ module uart_comm_tb;
 	output [7:0] byte;
 	begin
 		@ (negedge uut_tx);
-		#80;
+		#(serial_bit_width/2);
 		if (uut_tx)
 		begin
 			$display ("TEST FAILED: Floating start bit on uut_tx.\n");
 			$finish;
 		end
-		#160 byte[0] = uut_tx;
-		#160 byte[1] = uut_tx;
-		#160 byte[2] = uut_tx;
-		#160 byte[3] = uut_tx;
-		#160 byte[4] = uut_tx;
-		#160 byte[5] = uut_tx;
-		#160 byte[6] = uut_tx;
-		#160 byte[7] = uut_tx;
-		#160;
+		#serial_bit_width byte[0] = uut_tx;
+		#serial_bit_width byte[1] = uut_tx;
+		#serial_bit_width byte[2] = uut_tx;
+		#serial_bit_width byte[3] = uut_tx;
+		#serial_bit_width byte[4] = uut_tx;
+		#serial_bit_width byte[5] = uut_tx;
+		#serial_bit_width byte[6] = uut_tx;
+		#serial_bit_width byte[7] = uut_tx;
+		#serial_bit_width;
 		if (~uut_tx)
 		begin
 			$display ("TEST FAILED: Floating stop bit on uut_tx.\n");

@@ -20,7 +20,7 @@
 */
 
 
-`timescale 1ns/1ps
+`timescale 1ns/1ns
 
 // A quick define to help index 32-bit words inside a larger register.
 `define IDX(x) (((x)+1)*(32)-1):((x)*(32))

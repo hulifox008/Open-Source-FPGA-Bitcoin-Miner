@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="wave_isim.wdb" id="1" type="auto">
+         <top_modules>
+            <top_module name="uart_comm_tb" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <WVObjectSize size="4" />
+   <wvobject fp_name="/uart_comm_tb/comm_clk" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">comm_clk</obj_property>
+      <obj_property name="ObjectShortName">comm_clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/uart_comm_tb/hash_clk" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">hash_clk</obj_property>
+      <obj_property name="ObjectShortName">hash_clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/uart_comm_tb/uut_tx" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">uut_tx</obj_property>
+      <obj_property name="ObjectShortName">uut_tx</obj_property>
+   </wvobject>
+   <wvobject fp_name="/uart_comm_tb/uut_rx" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">uut_rx</obj_property>
+      <obj_property name="ObjectShortName">uut_rx</obj_property>
+   </wvobject>
+</wave_config>

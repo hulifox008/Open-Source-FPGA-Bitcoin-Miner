@@ -20,7 +20,7 @@
 */
 
 
-`timescale 1ns/1ps
+`timescale 1ns/1ns
 
 module fpgaminer_top (osc_clk,
 tx_serial,
@@ -53,8 +53,13 @@ led /* indicating serial communication */
 	localparam [31:0] GOLDEN_NONCE_OFFSET = (32'd1 << (7 - LOOP_LOG2)) + 32'd1;
 
 	input osc_clk;
-    output reg [31:0] golden_nonce;
+    input rx_serial;
+    output tx_serial;
+    output led;
+    reg [31:0] golden_nonce;
 
+
+    assign led = tx_serial | rx_serial;
 
 	//// 
 	reg [255:0] state = 0;
@@ -134,9 +139,9 @@ led /* indicating serial communication */
 	always @ (posedge hash_clk)
 	begin
 		`ifdef SIM
-			//midstate_buf <= 256'h2b3f81261b3cfd001db436cfd4c8f3f9c7450c9a0d049bee71cba0ea2619c0b5;
-			//data_buf <= 256'h00000000000000000000000080000000_00000000_39f3001b6b7b8d4dc14bfc31;
-			//nonce <= 30411740;
+			midstate_buf <= 256'h2b3f81261b3cfd001db436cfd4c8f3f9c7450c9a0d049bee71cba0ea2619c0b5;
+			data_buf <= 256'h00000000000000000000000080000000_00000000_39f3001b6b7b8d4dc14bfc31;
+			nonce <= 30411740;
 		`else
 			midstate_buf <= midstate_vw;
 			data_buf <= data2_vw;
